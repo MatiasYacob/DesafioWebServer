@@ -45,15 +45,26 @@ class ProductManager {
     updateProduct(id, updatedProduct) {
         const productIndex = this.products.findIndex((p) => p.id === id);
         if (productIndex !== -1) {
-            // Mantener el mismo ID
-            updatedProduct.id = id;
-            this.products[productIndex] = updatedProduct;
-            this.saveProductsToDisk();
-            return updatedProduct;
+            const PropiedadesRequeridas = ['title', 'description', 'price', 'thumbnail', 'code', 'stock'];
+    
+            // Verifico que tengan las mismas propiedades 
+            const Validado = PropiedadesRequeridas.every(prop => updatedProduct.hasOwnProperty(prop));
+    
+            if (Validado) {
+                // Mantener el mismo ID
+                updatedProduct.id = id;
+                this.products[productIndex] = updatedProduct;
+                this.saveProductsToDisk();
+                return updatedProduct;
+            } else {
+                console.log("Las Caracteristicas del producto no coinciden con el destino.");
+                return null;
+            }
         } else {
             return null; // Producto no encontrado
         }
     }
+    
 
     deleteProduct(id) {
         const productIndex = this.products.findIndex((p) => p.id === id);
@@ -90,60 +101,5 @@ const manager = new ProductManager('products.json');
 
 // Llamando al metodo "getProducts" recien creada la instancia
 console.log(manager.getProducts());
-/*
-// PROCESO DE TESTING:
-
-// Creacion de una instancia de la clase "ProductManager"
-const manager = new ProductManager('products.json');
-
-// Llamando al metodo "getProducts" recien creada la instancia
-console.log(manager.getProducts());
-
-// Declaracion de un producto con los campos solicitados en Testing
-const producto1 = {
-    title: "producto prueba",
-    description: "Este es un producto prueba",
-    price: 200,
-    thumbnail: "Sin imagen",
-    code: "abc123",
-    stock: 25,
-};
-
-// Llamando al metodo "addProduct"
-manager.addProduct(producto1);
-
-// Llamando al metodo "getProducts" nuevamente, ahora deberia mostrar el producto recien agregado
-console.log(manager.getProducts());
-
-// Ejemplo de actualizar un producto por ID
-const updatedProduct = {
-    title: "producto prueba",
-    description: "Este es un producto prueba",
-    price: 200,
-    thumbnail: "Sin imagen",
-    code: "abc123",
-    stock: 240,
-};
-
-//Se llamará al método “getProductById” y se corroborará que devuelva el producto con el id especificado
-const productoEncontrado = manager.getProductById(1);
-if (productoEncontrado) {
-    console.log("Producto Encontrado: " + JSON.stringify(productoEncontrado));
-}
-
-
-// Se llamará al método “updateProduct” y se intentará cambiar un campo de algún producto
-manager.updateProduct(1, updatedProduct);
-
-// Se llamará al método “deleteProduct”, se evaluará que realmente se elimine el producto
-const eliminacionExitosa = manager.deleteProduct(1); // Intenta eliminar el producto con ID 1
-
-if (eliminacionExitosa) {
-    console.log("Producto eliminado con exito.");
-} else {
-    console.log("No se pudo eliminar el producto.");
-}
-
-// Verificar que el producto se haya eliminado
-console.log(manager.getProducts()); */
+//exporto ProductManager
 module.exports = ProductManager;
